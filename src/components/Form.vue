@@ -1,7 +1,37 @@
 <script setup lang="ts">
 import InfoIcon from './icons/InfoIcon.vue'
 import DeleteIcon from './icons/DeleteIcon.vue'
-import {defineStore} from 'pinia'
+import { useFieldsStore } from '@/stores/fieldsDataStore'
+import type { FieldData, FieldDataState } from './utils/types.ts'
+import { computed, onMounted, ref } from 'vue'
+
+const store = useFieldsStore()
+onMounted(() => {
+  store.addField({
+    marks: ["1", "2", "3"],
+    local: true,
+    login: "login",
+    password: "password"
+  })
+
+  store.addField({
+    marks: ["4", "5"],
+    local: false,
+    login: "login2",
+  })
+})
+const allFields = computed(() => store.allFields)
+const localFields = computed(() => store.localFields)
+const ldapFields = computed(() => store.ldapFields)
+const showField = ref(false)
+function addNewField(item : FieldData) {
+  store.addField(item)
+}
+
+function removeField(id: number) {
+  console.log(id)
+  store.removeField(id)
+}
 
 </script>
 
@@ -9,9 +39,8 @@ import {defineStore} from 'pinia'
   <div class="max-w-4xl mx-auto flex flex-col h-screen items-center justify-center">
     <div class="flex gap-x-8 mb-4 align-middle items-center">
       <h1 class="text-xl font-bold text-gray-800">Учетные записи</h1>
-      <button class="bg-blue-500 text-white text-lg px-4 py-2 rounded hover:bg-blue-600">+</button>
+      <button class="bg-blue-500 text-white text-lg px-4 py-2 rounded hover:bg-blue-600" @click="showField = true">+</button>
     </div>
-
     <div class="flex items-center mb-4 bg-gray-100">
       <InfoIcon></InfoIcon>
       <p>Для указания нескольких меток для одной пары логин/пароль используйте разделитель ;</p>
@@ -28,7 +57,26 @@ import {defineStore} from 'pinia'
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr v-for="field in allFields" :key="field.id">
+            <td class="p-3">
+              <span v-for="mark in field.marks" class="px-2 m-0.5 bg-blue-200 text-blue-800 rounded">{{mark}}</span>
+            </td>
+            <td class="p-3">
+              <span> {{ field.local ? "Локальная" : "LDAP" }}</span>
+            </td>
+            <td class="p-3">
+              <span> {{ field.login}}</span>
+            </td>
+            <td class="p-3">
+              <span> {{ field.password ? field.password : "Пароль не предусмотрен" }}</span>
+            </td>
+            <td class="p-3">
+                <button @click="removeField(field.id)" class="text-gray-500 hover:text-red-500">
+                  <DeleteIcon></DeleteIcon>
+                </button>
+            </td>
+          </tr>
+          <tr v-if="showField">
             <td class="p-3">
                 <input type="text" value="XXX" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
             </td>
@@ -50,7 +98,17 @@ import {defineStore} from 'pinia'
                 </button>
             </td>
           </tr>
-          <tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+</style>
+
+<!--           <tr>
             <td class="p-3">
                 <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
             </td>
@@ -68,12 +126,4 @@ import {defineStore} from 'pinia'
                   <DeleteIcon></DeleteIcon>
                 </button>
             </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</template>
-
-<style scoped>
-</style>
+          </tr>-->

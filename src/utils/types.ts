@@ -8,5 +8,5 @@ export interface FieldData {
   
   // Можно также создать тип для состояния хранилища
   export interface FieldDataState {
-    items: FieldData[]
+    fieldsData: FieldData[]
   }
