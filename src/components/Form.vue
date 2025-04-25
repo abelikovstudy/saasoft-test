@@ -23,16 +23,38 @@ onMounted(() => {
 const allFields = computed(() => store.allFields)
 const localFields = computed(() => store.localFields)
 const ldapFields = computed(() => store.ldapFields)
-const showField = ref(false)
+const showField : Ref<boolean> = ref(false)
+const marks : Ref<string[]> = ref([])
+const isLocal : Ref<boolean> = ref(true)
+const login : Ref<string> = ref("")
+const password : Ref<string> = ref("")
+const inputRestrictions = {
+  "marks" : 100,
+  "login" : 50,
+  "password" : 50,
+}
 function addNewField(item : FieldData) {
   store.addField(item)
 }
 
 function removeField(id: number) {
-  console.log(id)
   store.removeField(id)
 }
 
+function onblur(value : Event, maxlen : number = 50){
+  console.log('blured',inputRestrictions[event.target.id] )
+}
+
+function onselect(event : Event){
+  console.log(event.target.value)
+  if(event.target.value === "local"){
+    isLocal.value = true
+  }
+  else{
+    isLocal.value = false
+  }
+  console.log(isLocal.value)
+}
 </script>
 
 <template>
@@ -78,27 +100,33 @@ function removeField(id: number) {
           </tr>
           <tr v-if="showField">
             <td class="p-3">
-                <input type="text" value="XXX" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
+                <input id="marks" type="text" :value="marks" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             <td class="p-3">
-                <select class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option>Локальная</option>
-                    <option>LDAP</option>
+                <select @change="onselect" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="local">Локальная</option>
+                    <option value="ldap">LDAP</option>
                 </select>
             </td>
-            <td class="p-3">
-                <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
+
+            <template v-if="isLocal">
+            <td class="p-3" >
+              <input id="login" type="text" :value="login" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
-            <td class="p-3">
-                <input type="password" value="password" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
+            <td class="p-3" >
+              <input id="password" type="password" :value="password" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
+            </template>
+            <td class="p-3" colspan="2" v-else>
+                <input id="login" type="text" :value="login" @blur="onblur" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
+            </td>
+
             <td class="p-3">
                 <button class="text-gray-500 hover:text-red-500">
                   <DeleteIcon></DeleteIcon>
                 </button>
             </td>
           </tr>
-
         </tbody>
       </table>
     </div>
