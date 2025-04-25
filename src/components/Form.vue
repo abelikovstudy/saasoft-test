@@ -30,7 +30,7 @@ import {defineStore} from 'pinia'
         <tbody>
           <tr>
             <td class="p-3">
-                <input type="text" value="XXX" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" value="XXX" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
             </td>
             <td class="p-3">
                 <select class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -39,10 +39,10 @@ import {defineStore} from 'pinia'
                 </select>
             </td>
             <td class="p-3">
-                <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
             </td>
             <td class="p-3">
-                <input type="password" value="password" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="password" value="password" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
             </td>
             <td class="p-3">
                 <button class="text-gray-500 hover:text-red-500">
@@ -52,7 +52,7 @@ import {defineStore} from 'pinia'
           </tr>
           <tr>
             <td class="p-3">
-                <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" value="Значение" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="50">
             </td>
             <td class="p-3">
                 <select class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -61,7 +61,7 @@ import {defineStore} from 'pinia'
                 </select>
             </td>
             <td class="p-3" colspan="2">
-                <input type="text" value="Значение" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input type="text" value="Значение" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
             </td>
             <td class="p-3">
                 <button class="text-gray-500 hover:text-red-500">
