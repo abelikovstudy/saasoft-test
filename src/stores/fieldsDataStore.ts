@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import type { FieldData, FieldDataState } from '../utils/types.ts'
-
 export const useFieldsStore = defineStore('field', {
   state: (): FieldDataState => ({
     fieldsData: []
@@ -23,5 +22,6 @@ export const useFieldsStore = defineStore('field', {
     removeField(id: number) {
       this.fieldsData = this.fieldsData.filter(field => field.id !== id)  
     },
-  }
+  },
+  persist: true,
 })

@@ -7,20 +7,6 @@ import { computed, onMounted, ref } from 'vue'
 import type { Mark } from '@/utils/types.ts'
 
 const store = useFieldsStore()
-onMounted(() => {
-  store.addField({
-    marks: [],
-    local: true,
-    login: "login",
-    password: "password"
-  })
-
-  store.addField({
-    marks: [ { text: "2"}, { text: "2"}, { text: "2"}],
-    local: false,
-    login: "login2",
-  })
-})
 const allFields = computed(() => store.allFields)
 const localFields = computed(() => store.localFields)
 const ldapFields = computed(() => store.ldapFields)
