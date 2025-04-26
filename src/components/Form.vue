@@ -23,16 +23,13 @@ onMounted(() => {
 const allFields = computed(() => store.allFields)
 const localFields = computed(() => store.localFields)
 const ldapFields = computed(() => store.ldapFields)
-const showField : Ref<boolean> = ref(false)
-const marks : Ref<string[]> = ref([])
-const isLocal : Ref<boolean> = ref(true)
-const login : Ref<string> = ref("")
-const password : Ref<string> = ref("")
-const inputRestrictions = {
-  "marks" : 100,
-  "login" : 50,
-  "password" : 50,
-}
+const showField = ref(false)
+const isLocal = ref(true)
+const fieldData = ref({
+  marks: "",
+  login: "",
+  password: ""
+})
 function addNewField(item : FieldData) {
   store.addField(item)
 }
@@ -41,12 +38,19 @@ function removeField(id: number) {
   store.removeField(id)
 }
 
-function onblur(value : Event, maxlen : number = 50){
-  console.log('blured',inputRestrictions[event.target.id] )
-}
+function onblur(input_type: string){
+  if(fieldData.value.password.length > 50 || fieldData.value.password.length === 0){
 
+  }
+  
+  if(fieldData.value.login.length > 50 || fieldData.value.login.length === 0){
+
+  }
+  if(fieldData.value.marks.length > 100){
+
+  }
+}
 function onselect(event : Event){
-  console.log(event.target.value)
   if(event.target.value === "local"){
     isLocal.value = true
   }
@@ -100,7 +104,7 @@ function onselect(event : Event){
           </tr>
           <tr v-if="showField">
             <td class="p-3">
-                <input id="marks" type="text" :value="marks" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="marks" type="text" v-model="fieldData.marks" :class="{ 'error-input': fieldData.marks.length > 100 }" @blur="onblur(`marks`)" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             <td class="p-3">
                 <select @change="onselect" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -111,14 +115,14 @@ function onselect(event : Event){
 
             <template v-if="isLocal">
             <td class="p-3" >
-              <input id="login" type="text" :value="login" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input id="login" type="text" v-model="fieldData.login" @blur="onblur(`login`)" :class="{ 'error-input': fieldData.login.length > 50 || fieldData.login.length == 0 }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             <td class="p-3" >
-              <input id="password" type="password" :value="password" @blur="onblur" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input id="password" type="password" v-model="fieldData.password" @blur="onblur(`password`)" :class="{ 'error-input': fieldData.password.length > 50 || fieldData.password.length == 0 }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             </template>
             <td class="p-3" colspan="2" v-else>
-                <input id="login" type="text" :value="login" @blur="onblur" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
+                <input id="login" type="text" v-model="fieldData.login" @blur="onblur(`login`)" :class="{ 'error-input': fieldData.login.length > 50 || fieldData.login.length == 0 }" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
             </td>
 
             <td class="p-3">
@@ -134,6 +138,10 @@ function onselect(event : Event){
 </template>
 
 <style scoped>
+.error-input {
+  background-color: #ffdddd;
+  border: 1px solid red;
+}
 </style>
 
 <!--           <tr>
