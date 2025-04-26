@@ -4,18 +4,19 @@ import DeleteIcon from './icons/DeleteIcon.vue'
 import { useFieldsStore } from '@/stores/fieldsDataStore'
 import type { FieldData, FieldDataState } from './utils/types.ts'
 import { computed, onMounted, ref } from 'vue'
+import type { Mark } from '@/utils/types.ts'
 
 const store = useFieldsStore()
 onMounted(() => {
   store.addField({
-    marks: ["1", "2", "3"],
+    marks: [],
     local: true,
     login: "login",
     password: "password"
   })
 
   store.addField({
-    marks: ["4", "5"],
+    marks: [ { text: "2"}, { text: "2"}, { text: "2"}],
     local: false,
     login: "login2",
   })
@@ -52,8 +53,8 @@ function onselect(event : Event){
   }
   console.log(isLocal.value)
 }
-function parseMarks(input_string : string) : string[]{
-  return input_string.split(';')
+function parseMarks(input_string : string) : Mark[]{
+  return input_string.split(';').map(el => ({text: el}));
 }
 function onBlur(input_type: string){
   switch(input_type){
@@ -75,19 +76,20 @@ function onBlur(input_type: string){
     case "marks":
       if(fieldData.value.marks.length < 100){
         fieldValidation.value.marks = true;
-      }
+      } 
       else{
         fieldValidation.value.marks = false;
         break;
       }
     default:
-      if(fieldValidation.value.marks && fieldValidation.value.login && (isLocal || fieldValidation.value.password)){
+      if(!isLocal.value) fieldValidation.value.password = true;
+      if(fieldValidation.value.marks && fieldValidation.value.login && fieldValidation.value.password){
         if(isLocal.value){
           addNewField({
           marks: parseMarks(fieldData.value.marks),
           local: true,
           login: fieldData.value.login,
-          passwords: fieldData.value.password
+          password: fieldData.value.password
         })
         }
         else{
@@ -99,6 +101,7 @@ function onBlur(input_type: string){
         }
 
         showField.value = false
+        isLocal.value = true
         fieldData.value.marks = ""
         fieldData.value.login = ""
         fieldData.value.password = ""
@@ -135,7 +138,12 @@ function onBlur(input_type: string){
         <tbody>
           <tr v-for="field in allFields" :key="field.id">
             <td class="p-3">
-              <span v-for="mark in field.marks" class="px-2 m-0.5 bg-blue-200 text-blue-800 rounded">{{mark}}</span>
+              <div v-if="field.marks.length">
+                <span v-for="mark in field.marks" class="px-2 m-0.5 bg-blue-200 text-blue-800 rounded">{{mark.text}}</span>
+              </div>
+              <div v-else>
+                <span>Метки отсутствуют</span>
+              </div>
             </td>
             <td class="p-3">
               <span> {{ field.local ? "Локальная" : "LDAP" }}</span>
