@@ -5,7 +5,8 @@ export interface FieldData {
     login: string
     password?: string
   }
-  
+
+
   // Можно также создать тип для состояния хранилища
   export interface FieldDataState {
     fieldsData: FieldData[]

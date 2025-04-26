@@ -30,25 +30,18 @@ const fieldData = ref({
   login: "",
   password: ""
 })
+
+const fieldValidation = ref({
+  marks: true,
+  login: false,
+  password: false
+})
 function addNewField(item : FieldData) {
   store.addField(item)
 }
 
 function removeField(id: number) {
   store.removeField(id)
-}
-
-function onblur(input_type: string){
-  if(fieldData.value.password.length > 50 || fieldData.value.password.length === 0){
-
-  }
-  
-  if(fieldData.value.login.length > 50 || fieldData.value.login.length === 0){
-
-  }
-  if(fieldData.value.marks.length > 100){
-
-  }
 }
 function onselect(event : Event){
   if(event.target.value === "local"){
@@ -58,6 +51,63 @@ function onselect(event : Event){
     isLocal.value = false
   }
   console.log(isLocal.value)
+}
+function parseMarks(input_string : string) : string[]{
+  return input_string.split(';')
+}
+function onBlur(input_type: string){
+  switch(input_type){
+    case "login":
+      if(fieldData.value.login.length < 50 && fieldData.value.login.length > 0){
+        fieldValidation.value.login = true;
+      }
+      else{
+        fieldValidation.value.login = false;
+        break;
+      }
+    case "password":
+      if(fieldData.value.password.length < 50 && fieldData.value.password.length > 0){
+        fieldValidation.value.password = true;
+      }
+      else{
+        fieldValidation.value.password = false;
+      }
+    case "marks":
+      if(fieldData.value.marks.length < 100){
+        fieldValidation.value.marks = true;
+      }
+      else{
+        fieldValidation.value.marks = false;
+        break;
+      }
+    default:
+      if(fieldValidation.value.marks && fieldValidation.value.login && (isLocal || fieldValidation.value.password)){
+        if(isLocal.value){
+          addNewField({
+          marks: parseMarks(fieldData.value.marks),
+          local: true,
+          login: fieldData.value.login,
+          passwords: fieldData.value.password
+        })
+        }
+        else{
+          addNewField({
+          marks: parseMarks(fieldData.value.marks),
+          local: false,
+          login: fieldData.value.login
+        })
+        }
+
+        showField.value = false
+        fieldData.value.marks = ""
+        fieldData.value.login = ""
+        fieldData.value.password = ""
+        fieldValidation.value.marks = true;
+        fieldValidation.value.login = false;
+         fieldValidation.value.password = false;
+      }
+
+  }
 }
 </script>
 
@@ -104,7 +154,7 @@ function onselect(event : Event){
           </tr>
           <tr v-if="showField">
             <td class="p-3">
-                <input id="marks" type="text" v-model="fieldData.marks" :class="{ 'error-input': fieldData.marks.length > 100 }" @blur="onblur(`marks`)" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <input id="marks" type="text" v-model="fieldData.marks" :class="{ 'error-input': !fieldValidation.marks }" @blur="onBlur(`marks`)" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             <td class="p-3">
                 <select @change="onselect" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -115,14 +165,14 @@ function onselect(event : Event){
 
             <template v-if="isLocal">
             <td class="p-3" >
-              <input id="login" type="text" v-model="fieldData.login" @blur="onblur(`login`)" :class="{ 'error-input': fieldData.login.length > 50 || fieldData.login.length == 0 }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input id="login" type="text" v-model="fieldData.login" @blur="onBlur(`login`)" :class="{ 'error-input': !fieldValidation.login }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             <td class="p-3" >
-              <input id="password" type="password" v-model="fieldData.password" @blur="onblur(`password`)" :class="{ 'error-input': fieldData.password.length > 50 || fieldData.password.length == 0 }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input id="password" type="password" v-model="fieldData.password" @blur="onBlur(`password`)" :class="{ 'error-input': !fieldValidation.password }" class="border rounded p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
             </td>
             </template>
             <td class="p-3" colspan="2" v-else>
-                <input id="login" type="text" v-model="fieldData.login" @blur="onblur(`login`)" :class="{ 'error-input': fieldData.login.length > 50 || fieldData.login.length == 0 }" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
+                <input id="login" type="text" v-model="fieldData.login" @blur="onBlur(`login`)" :class="{ 'error-input': !fieldValidation.login }" class="border rounded p-2 size-full focus:outline-none focus:ring-2 focus:ring-blue-500" maxlength="100">
             </td>
 
             <td class="p-3">
